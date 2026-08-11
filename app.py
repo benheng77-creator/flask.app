@@ -35,18 +35,23 @@ def index():
     error = None
 
     if request.method == "POST":
-        try:
-            study_hours = float(request.form["study_hours"])
+        study_hours_raw = request.form.get("study_hours")
 
-            input_data = pd.DataFrame({
-                feature_column: [study_hours]
-            })
-
-            exam_score = model.predict(input_data)[0]
-            exam_score = round(exam_score, 2)
-
-        except ValueError:
+        if study_hours_raw in (None, ""):
             error = "Please enter a valid number."
+        else:
+            try:
+                study_hours = float(study_hours_raw)
+
+                input_data = pd.DataFrame({
+                    feature_column: [study_hours]
+                })
+
+                exam_score = model.predict(input_data)[0]
+                exam_score = round(exam_score, 2)
+
+            except ValueError:
+                error = "Please enter a valid number."
 
     return render_template(
         "index.html",
@@ -61,9 +66,15 @@ def index():
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            raise ValueError("Request body must be valid JSON.")
 
-        study_hours = float(data["study_hours"])
+        study_hours_raw = data.get("study_hours")
+        if study_hours_raw in (None, ""):
+            raise ValueError("The 'study_hours' field is required.")
+
+        study_hours = float(study_hours_raw)
 
         input_data = pd.DataFrame({
             feature_column: [study_hours]
@@ -77,10 +88,14 @@ def predict():
             "exam_score": exam_score
         })
 
-    except Exception as e:
+    except ValueError as e:
         return jsonify({
             "error": str(e)
         }), 400
+    except Exception:
+        return jsonify({
+            "error": "Unexpected server error."  # hide internal details
+        }), 500
 
 
 if __name__ == "__main__":
