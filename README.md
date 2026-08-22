@@ -1,16 +1,18 @@
 # Linear Regression Flask App
 
-The app uses simple linear regression to learn the linear regression. The user enters a study hour value, and the app predicts the exam score.
+An educational Flask application that trains a simple linear-regression model to predict an exam score from study hours. It includes a browser interface and a JSON API suitable for Power Automate or Power Apps demonstrations.
+
+## Features
+
+- trains and persists a small linear-regression model
+- serves a browser form for predictions
+- exposes a `POST /predict` JSON endpoint
+- runs locally with Python and Flask
+
+## Project structure
 
 ```text
-Input: 5
-Output exam score is: 60.5
-```
-
-## File Structure
-
-```text
-flask_app/
+flask.app/
 ├── models/
 │   └── linear_regression_model.joblib
 ├── templates/
@@ -24,84 +26,52 @@ flask_app/
 └── train_model.py
 ```
 
-## First-Time Setup Steps
-
-Run the following commands when setting up the project for the first time on Mac.
-
-### 1. Go to the Project Folder
+## Setup
 
 ```bash
-cd path/to/flask_app
+python -m venv .venv
 ```
 
-### 2. Create a Virtual Environment
+Activate the environment:
 
 ```bash
-python3 -m venv .venv
-```
-
-### 3. Activate the Virtual Environment
-
-```bash
+# macOS or Linux
 source .venv/bin/activate
+
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
 ```
 
-## Run the Project
-
-### 1. Train the Model
+Install dependencies:
 
 ```bash
-python3 train_model.py
+python -m pip install -r requirements.txt
 ```
 
-This creates the saved model file:
+## Run
 
-```text
-models/linear_regression_model.joblib
-```
-
-### 2. Run the Flask App
+Train the model:
 
 ```bash
-python3 app.py
+python train_model.py
 ```
 
-### 3. Open the App in Browser
+Start Flask:
 
-Open this link in your browser:
-
-```text
-http://127.0.0.1:5000
+```bash
+python app.py
 ```
 
----
+Open `http://127.0.0.1:5000`.
 
-## How to Use the App
+## API
 
-1. Enter the number of study hours.
-2. Click **Predict**.
-3. The app will display the predicted exam score.
-
-Example output:
-
-```text
-Output exam score is: 72.5
-```
-
-## API Integration (Power Platform)
-
-The app exposes a JSON API endpoint suitable for Power Automate / Power Apps integration.
-
-- Endpoint: `POST /predict`
-- Request JSON: `{ "study_hours": <number> }`
-- Response JSON: `{ "study_hours": <number>, "exam_score": <number> }`
-
-Example `curl` request:
+Request:
 
 ```bash
 curl -X POST http://localhost:5000/predict \
-	-H 'Content-Type: application/json' \
-	-d '{"study_hours":5}'
+  -H "Content-Type: application/json" \
+  -d '{"study_hours": 5}'
 ```
 
 Example response:
@@ -113,4 +83,6 @@ Example response:
 }
 ```
 
-Consult the chapter PDF at `C:\Users\jvben\Downloads\Chapter 5 API Integration with Power Platform.pdf` for detailed Power Platform integration steps and screenshots.
+## Security
+
+Please report vulnerabilities privately through this repository's **Security** tab. See [SECURITY.md](SECURITY.md).
