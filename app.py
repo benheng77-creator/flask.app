@@ -88,9 +88,9 @@ def predict():
             "exam_score": exam_score
         })
 
-    except ValueError as e:
+    except (TypeError, ValueError):
         return jsonify({
-            "error": str(e)
+            "error": "Request body must contain a numeric 'study_hours' value."
         }), 400
     except Exception:
         return jsonify({
